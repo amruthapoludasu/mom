@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="bd8d36f0-3c34-43a7-a2b2-b75d0efdb555" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="loadstaticFlow" doc:id="fed9ce7f-87eb-4cc2-a3fe-6600f6ce7fcc" >
+		<http:listener doc:name="Listener" doc:id="9fdb904d-fb98-4bd7-94f9-01d9d586fc32" config-ref="HTTP_Listener_config" path="/load"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="3f2337c8-35ae-4418-af30-50fb8c780af5" resourceBasePath="C:/AnypointStudio/studio-workspace/load.static.practice/src/main/resources/input1.html"/>
+	</flow>
+	<flow name="loadstaticFlow1" doc:id="2631011c-b551-41a4-883b-aefefc51449a" >
+		<http:listener doc:name="Listener" doc:id="330ef86e-10dd-4fc2-a33b-e48716e64264" config-ref="HTTP_Listener_config" path="/html"/>
+		<ee:transform doc:name="Transform Message" doc:id="3d707519-af60-46ef-9a1f-c7d684191d1d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"firtname": attributes.queryParams."fname",
+	"lastname": attributes.queryParams."lname"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="e0abdf05-2fe5-4c7b-96e9-7e78afc97455" message="#[payload]"/>
+		<http:load-static-resource doc:name="Copy_of_Load static resource" doc:id="d44cc914-a8e2-4327-aadc-52bc2db7a681" resourceBasePath="C:/AnypointStudio/studio-workspace/load.static.practice/src/main/resources/input1.html" />
+	</flow>
+</mule>
